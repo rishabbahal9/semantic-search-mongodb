@@ -10,7 +10,8 @@ Node v22.14.0
     ```bash
     npm install
     ```
-3. Change text in data.ts in utils directory if required.
+3. You have 2 options here. If you want to ingest large chunk of text, then change text in data.ts in utils directory. If you want to ingest mongodb db data after neutralizing it to text, then create a `data` directory in the root of the project and add .json file in there. Accordingly in `ingest-data.ts` file, comment and uncomment #1 lines or #2 lines.
+
 4. Compile code
     ```bash
     npx tsc

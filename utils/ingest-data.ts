@@ -1,18 +1,20 @@
 import { MongoClient } from "mongodb";
 import { getEmbedding } from "./get-embeddings.js";
-import { splitText } from "./my-splitter.js";
-import { text } from "./data.js";
+import { splitText, splitTextChunks } from "./my-splitter.js";
+import { extractDataFromJson } from "./extract-data-from-json.js";
+// import { text } from "./data.js"; // #1
+const textChunks = extractDataFromJson(); // #2
 
 const ATLAS_CONNECTION_STRING = process.env.ATLAS_CONNECTION_STRING || "";
 const DATABASE_NAME = process.env.DATABASE_NAME || "awesome";
-const COLLECTION_NAME =
-  process.env.COLLECTION_NAME || "awesome-embeddings";
+const COLLECTION_NAME = process.env.COLLECTION_NAME || "awesome-embeddings";
 
 async function run() {
   const client = new MongoClient(ATLAS_CONNECTION_STRING);
 
   try {
-    const docs = await splitText(text);
+    // const docs = await splitText(text);  // #1
+    const docs = await splitTextChunks(textChunks); // #2
 
     // Connect to your Atlas cluster
     await client.connect();
