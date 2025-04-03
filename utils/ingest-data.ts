@@ -23,18 +23,24 @@ async function run() {
 
     console.log("Generating embeddings and inserting documents...");
     const insertDocuments: any[] = [];
-    await Promise.all(
-      docs.map(async (doc) => {
-        // Generate embeddings using the function that you defined
-        const embedding = await getEmbedding(doc.pageContent);
+    const BATCH_SIZE = 20; // Adjust concurrency as needed
 
-        // Add the document with the embedding to array of documents for bulk insert
-        insertDocuments.push({
-          document: doc,
-          embedding: embedding,
-        });
-      })
-    );
+    for (let i = 0; i < docs.length; i += BATCH_SIZE) {
+      const batch = docs.slice(i, i + BATCH_SIZE);
+      await Promise.all(
+        batch.map(async (doc) => {
+          // Generate embeddings using the function that you defined
+          const embedding = await getEmbedding(doc.pageContent);
+          // Add the document with the embedding to array of documents for bulk insert
+          insertDocuments.push({
+            document: doc,
+            embedding: embedding,
+          });
+        })
+      );
+      // Log batch progress
+      console.log(`Processed batch ${Math.floor(i / BATCH_SIZE) + 1} of ${Math.ceil(docs.length / BATCH_SIZE)}`);
+    }
 
     // Continue processing documents if an error occurs during an operation
     const options = { ordered: false };
